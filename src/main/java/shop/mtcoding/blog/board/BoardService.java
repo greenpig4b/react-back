@@ -1,6 +1,8 @@
 package shop.mtcoding.blog.board;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +12,7 @@ import shop.mtcoding.blog.reply.Reply;
 import shop.mtcoding.blog.reply.ReplyJPARepository;
 import shop.mtcoding.blog.user.User;
 
+
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -18,6 +21,7 @@ public class BoardService {
 
     private final BoardJPARepository boardJPARepository;
     private final ReplyJPARepository replyJPARepository;
+
 
     public BoardResponse.DTO 글조회(int boardId){
         Board board = boardJPARepository.findById(boardId)
@@ -60,6 +64,14 @@ public class BoardService {
 
         boardJPARepository.deleteById(boardId);
     }
+
+
+    // 페이징 하기 위해서 만든 서비스
+    public BoardResponse.MainV2DTO 글목록조회V2(Pageable pageable) {
+        Page<Board> boardPG = boardJPARepository.findAll(pageable);
+        return new BoardResponse.MainV2DTO(boardPG);
+    }
+
 
     public List<BoardResponse.MainDTO> 글목록조회() {
         Sort sort = Sort.by(Sort.Direction.DESC, "id");
